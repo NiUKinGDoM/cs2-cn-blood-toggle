@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>CS国服去和谐程序</AssemblyName>
+    <RootNamespace>CSBloodToggle</RootNamespace>
+    <Version>1.1.0</Version>
+    <Product>CS国服去和谐程序</Product>
+    <Description>CS2 国服血量切换：去和谐（红血）/ 恢复和谐，纯文件改名，不注入不修改内容</Description>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <StartupObject>CSBloodToggle.Program</StartupObject>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <GenerateSupportedRuntime>false</GenerateSupportedRuntime>
+    <DebugType>none</DebugType>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>
