@@ -82,15 +82,54 @@ Steam 库 → 右键 CS2 → 属性 → 通用 → 启动选项，填：
 
 什么都不动，接受石油色血液。这是唯一能保住「国服 + 低延迟」的选择。
 
-### 方案 C：改 vpk 内容（不推荐）
+### 方案 C：修改 `gameinfo.gi`（技术上能红血，但会失去官方匹配）
 
-理论上可以保留文件、只替换内容。但：
+2026-10-27 进一步排查，找到了真正的控制点。
 
-- 需要国际服同名的 vpk 文件
-- 会被 Steam 完整性校验覆盖掉
-- 完美平台（PAC）有独立的文件校验，可能判定为篡改
+Source 2 引擎**不按文件名引用 `pak01_dir.vpk`**，挂载关系全写在 `game\csgo\gameinfo.gi` 里：
 
-没验证过，风险高于收益，不建议尝试。
+```ini
+FileSystem
+{
+    SearchPaths
+    {
+        Game_LowViolence csgo_lv     ← 就是这一行
+        Game csgo
+        Game csgo_imported
+        Game csgo_core
+        ...
+    }
+}
+```
+
+`Game_LowViolence` 是 Source 2 的**内容覆盖层**，官方文档明确写着它「used for the Perfect World build」——专门给完美世界国服准备的。
+
+**删掉这一行**，引擎就不会挂载 `csgo_lv`，也就不会去找 `pak01_dir.vpk`，血会回落成红色，而且不需要删任何文件。
+
+**但不要这么做。** 同一个文档在警告区里写得很清楚：
+
+> A client running with a modified one fails the signature check at launch and cannot join VAC secure servers until the original is back.
+
+翻译：客户端改过 `gameinfo.gi` 之后，启动时签名校验会失败，**在恢复原文件之前无法加入 VAC 安全服务器**。
+
+也就是说——红血能拿到，但你打不了官方匹配了。而且每次 CS2 更新、每次 Steam 验证完整性，这个文件都会被覆盖回原样。
+
+比删文件更"聪明"，但结局一样：拿不到「国服 + 红血」。
+
+### 方案 D：重打包 vpk 内容（不推荐）
+
+保留 `csgo_lv` 目录和文件名，只把里面的血迹贴图换成红色版本。
+
+- 需要国际服对应的资源文件
+- VPK 内部有 CRC32 校验，改完必须重打包
+- Steam 完整性校验会覆盖
+- 每次游戏更新失效
+
+技术上能做，工程量极大，收益为零（下次更新又没了）。
+
+### 顺带说一句
+
+社区里那个 2021 年的 `CS2-Anti-Censorship`（脚本删除 perfectworld 文件）是 CS:GO 时代的东西，在 CS2 上早已失效。
 
 ---
 
@@ -184,6 +223,8 @@ copy bin\Release\net48\CS国服去和谐.exe  ← 拷回
 | 2026-10-21 | 加最小化功能 |
 | 2026-10-22 | 更换图标配色（与游戏图标区分）；用户真机验证通过 |
 | **2026-10-24** | **方法失效**，游戏更新后移走文件会导致 FATAL ERROR |
+| 2026-10-27 | 定位到 `gameinfo.gi` 的 `Game_LowViolence csgo_lv` 控制点，但改它会破坏 VAC 签名校验，同样不可行 |
+| 2026-10-27 | 开源存档到 GitHub |
 
 有新的解法欢迎提 Issue / PR，我会更新到本文件。
 
